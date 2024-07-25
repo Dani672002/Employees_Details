@@ -9,6 +9,8 @@ import logo from '../assets/dealsdray.png';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import config from "../config"; // Import the configuration
+
 const EmployeeListComponents = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -16,11 +18,12 @@ const EmployeeListComponents = () => {
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-const navigate = useNavigate ();
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/employees');
+        const response = await axios.get(`${config.backendUrl}/api/employees`);
         setRows(response.data);
       } catch (error) {
         console.error('Error fetching employees:', error);
@@ -42,7 +45,7 @@ const navigate = useNavigate ();
 
   const handleConfirmDelete = async (selectedId) => {
     try {
-      await axios.delete(`http://localhost:4000/api/employees/${selectedId}`);
+      await axios.delete(`${config.backendUrl}/api/employees/${selectedId}`);
       setRows(rows.filter(row => row._id !== selectedId));
       handleClose();
     } catch (error) {
@@ -58,36 +61,32 @@ const navigate = useNavigate ();
           backgroundColor: "#333",
           padding: "10px",
           display: "flex",
-          justifyContent:'space-between',
+          justifyContent: 'space-between',
           position: "sticky",
           top: 0,
           zIndex: 1,
         }}
       >
         <div>
-        <img
-          src={logo}
-          alt="logo"
-          style={{ width: isMobile ? "60px" : "60px", borderRadius: "30px" }}
-        />
+          <img
+            src={logo}
+            alt="logo"
+            style={{ width: isMobile ? "60px" : "60px", borderRadius: "30px" }}
+          />
         </div>
-        <Link to="/dashboard" style={{paddingTop:'13px'}}>
-        <Button 
-              style={{
-                backgroundColor:"#000",
-                color: "white",
-                border: "1px solid black",
-                borderRadius: "10px",
-                width: "100px",
-              }}
-              
-            >
-              Home
-            </Button>
+        <Link to="/dashboard" style={{ paddingTop: '13px' }}>
+          <Button
+            style={{
+              backgroundColor: "#000",
+              color: "white",
+              border: "1px solid black",
+              borderRadius: "10px",
+              width: "100px",
+            }}
+          >
+            Home
+          </Button>
         </Link>
-        
-       
-       
       </Box>
 
       <TableContainer component={Paper}>
@@ -111,7 +110,7 @@ const navigate = useNavigate ();
               <TableRow key={row._id}>
                 <TableCell component="th" scope="row">{row._id}</TableCell>
                 <TableCell>
-                  <Avatar src={`http://localhost:4000/uploads/${row.image}`} alt={row.name} />
+                  <Avatar src={`${config.backendUrl}/uploads/${row.image}`} alt={row.name} />
                 </TableCell>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.email}</TableCell>
