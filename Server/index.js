@@ -24,7 +24,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Middleware
-
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -43,13 +42,18 @@ app.use((err, req, res, next) => {
 });
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log("MongoDB is connected");
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
-    })
-    .catch((error) => {
-        console.error("Error connecting to the database:", error);
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false, // If you use findOneAndUpdate()
+    useCreateIndex: true // If you use mongoose < 6.0.0
+})
+.then(() => {
+    console.log("MongoDB is connected");
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
     });
+})
+.catch((error) => {
+    console.error("Error connecting to the database:", error);
+});
