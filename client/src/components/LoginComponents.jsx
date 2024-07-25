@@ -19,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import logo from "../assets/dealsdray.png";
 import { _toast } from "../utils/toastUtills.js";
 import axios from "axios";
+import config from "../config"; // Import the configuration
 
 const LoginComponents = () => {
   const theme = useTheme();
@@ -35,11 +36,12 @@ const LoginComponents = () => {
       password: "",
     },
   });
+
   const onSubmit = async (data) => {
     setLoading(true);
     try {
       if (isRegister) {
-        const response = await axios.post("http://localhost:4000/api/auth/register", data);
+        const response = await axios.post(`${config.backendUrl}/auth/register`, data);
         if (response?.status === 201) {
           _toast("Registration Successful", "success");
           setTimeout(() => {
@@ -49,7 +51,7 @@ const LoginComponents = () => {
           _toast("Registration Failed", "error");
         }
       } else {
-        const response = await axios.post("http://localhost:4000/api/auth/login", data);
+        const response = await axios.post(`${config.backendUrl}/auth/login`, data);
         if (response?.status === 200) {
           _toast("Login Successful", "success");
           setTimeout(() => {
