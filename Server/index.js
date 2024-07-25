@@ -42,12 +42,7 @@ app.use((err, req, res, next) => {
 });
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false, // If you use findOneAndUpdate()
-    useCreateIndex: true // If you use mongoose < 6.0.0
-})
+mongoose.connect(process.env.MONGO_URL)
 .then(() => {
     console.log("MongoDB is connected");
     app.listen(PORT, () => {
