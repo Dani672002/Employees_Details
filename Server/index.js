@@ -9,6 +9,12 @@ const authRoutes = require('./src/routes/auth');
 const employeeRoutes = require('./src/routes/employee'); // Adjust path as needed
 
 const app = express();
+app.use(cors(
+  {
+    origin:{"https://deploy-mern-1whq.vercel.app"},
+    methods:{"POST","GET","PUT","DELETE"},
+    credentials:true
+  }
 const PORT = process.env.PORT || 4000;
 
 // Configure Multer for file upload
