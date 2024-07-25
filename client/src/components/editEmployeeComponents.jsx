@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import config from "../config"; // Import the configuration
 
 const EditEmployeeComponents = () => {
   const theme = useTheme();
@@ -25,7 +26,7 @@ const EditEmployeeComponents = () => {
 
   useEffect(() => {
     // Fetch employee data by ID
-    axios.get(`http://localhost:4000/api/employees/${id}`)
+    axios.get(`${config.backendUrl}/api/employees/${id}`)
       .then(response => {
         const employee = response.data;
         setInitialValues({
@@ -69,14 +70,13 @@ const EditEmployeeComponents = () => {
           formData.append('imageUpload', values.imageUpload);
         }
     
-        await axios.put(`http://localhost:4000/api/employees/${id}`, formData, {
+        await axios.put(`${config.backendUrl}/api/employees/${id}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
     
         setSuccessMessage('Employee updated successfully!');
-        // Navigate immediately without delay
         navigate('/list');
       } catch (error) {
         setError('Error updating employee data.');
@@ -248,17 +248,16 @@ const EditEmployeeComponents = () => {
               </div>
             </label>
             <label>
-  Image Upload (optional):
-  <input
-  type="file"
-  name="imageUpload" // This should match 'imageUpload' in multer.single() or multer.array()
-  onChange={(event) => {
-    formik.setFieldValue('imageUpload', event.currentTarget.files[0]);
-  }}
-  style={{ width: '100%', padding: '10px', margin: '8px 0', display: 'block', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#333', color: '#fff' }}
-
-/>
-</label>
+              Image Upload (optional):
+              <input
+                type="file"
+                name="imageUpload" // This should match 'imageUpload' in multer.single() or multer.array()
+                onChange={(event) => {
+                  formik.setFieldValue('imageUpload', event.currentTarget.files[0]);
+                }}
+                style={{ width: '100%', padding: '10px', margin: '8px 0', display: 'block', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#333', color: '#fff' }}
+              />
+            </label>
             <button type="submit" style={{ padding: '10px 20px', margin: '16px 0', border: 'none', borderRadius: '4px', backgroundColor: '#007bff', color: '#fff', cursor: 'pointer' }}>Update Employee</button>
           </Box>
         </form>
