@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import config from "../config"; // Import the configuration
 
 const EmployeeComponents = () => {
   const theme = useTheme();
@@ -20,7 +21,7 @@ const EmployeeComponents = () => {
       designation: '',
       gender: '',
       course: [],
-      imageUpload: " ",
+      imageUpload: null, // Changed to null to handle file input
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Required'),
@@ -29,7 +30,7 @@ const EmployeeComponents = () => {
       designation: Yup.string().required('Required'),
       gender: Yup.string().required('Required'),
       course: Yup.array().min(1, 'At least one course must be selected'),
-      imageUpload: Yup.mixed().required('Required'),
+      imageUpload: Yup.mixed(), // No longer required
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -40,17 +41,18 @@ const EmployeeComponents = () => {
       formData.append('designation', values.designation);
       formData.append('gender', values.gender);
       formData.append('course', JSON.stringify(values.course));
-      formData.append('imageUpload', values.imageUpload);
+      if (values.imageUpload) {
+        formData.append('imageUpload', values.imageUpload);
+      }
   
       try {
-        const response = await axios.post('http://localhost:4000/api/employees', formData, {
+        const response = await axios.post(`${config.backendUrl}/api/employees`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
         if (response.status === 201) {
           alert('Employee Created Successfully');
-        
           navigate('/list'); // Navigate to the list page
         } else {
           alert('Submission Failed');
@@ -63,6 +65,7 @@ const EmployeeComponents = () => {
       }
     },
   });
+
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
     if (checked) {
@@ -139,14 +142,14 @@ const EmployeeComponents = () => {
           </div>
 
           <div>
-            <label htmlFor="imageUpload" style={{ marginBottom: '5px', display: 'block' }}>Image Upload</label>
+            <label htmlFor="imageUpload" style={{ marginBottom: '5px', display: 'block' }}>Image Upload (optional)</label>
             <input
               id="imageUpload"
               name="imageUpload"
               type="file"
-              // onChange={(event) => formik.setFieldValue('imageUpload', event.currentTarget.files[0])}
+              onChange={(event) => formik.setFieldValue('imageUpload', event.currentTarget.files[0])}
+              style={{ width: '100%', padding: '10px', margin: '8px 0', display: 'block', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#333', color: '#fff' }}
             />
-            {/* {formik.touched.imageUpload && formik.errors.imageUpload ? <div style={{ color: 'red', fontSize: '0.875em' }}>{formik.errors.imageUpload}</div> : null} */}
           </div>
           <button type="submit" style={{ padding: '10px 20px', backgroundColor: '#007BFF', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
             {loading ? 'Submitting...' : 'Submit'}
